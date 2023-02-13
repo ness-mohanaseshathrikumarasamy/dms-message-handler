@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="c1bdf91" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="01d62477-c04a-4d51-8862-2034c30b1ecd">
+  <bpmn:process id="dealer_tracker_validation_workflow" name="dealer_tracker_validation" isExecutable="true">
+    <bpmn:startEvent id="received_dms_application_id" name="received_dms_application">
+      <bpmn:outgoing>Flow_1m9z0ki</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1m9z0ki" sourceRef="received_dms_application_id" targetRef="dms_application_validation_id" />
+    <bpmn:userTask id="dms_application_validation_id" name="dms_application_validation">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=name" target="name" />
+          <zeebe:input source="=contact" target="contact" />
+          <zeebe:input source="=age" target="age" />
+          <zeebe:output source="=age" target="age" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m9z0ki</bpmn:incoming>
+      <bpmn:outgoing>Flow_1930bln</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1930bln" sourceRef="dms_application_validation_id" targetRef="dealer_tracker_age_decision" />
+    <bpmn:exclusiveGateway id="Gateway_13xhwt8">
+      <bpmn:incoming>Flow_1mpaqfi</bpmn:incoming>
+      <bpmn:outgoing>eligible_customer_flag</bpmn:outgoing>
+      <bpmn:outgoing>uneligible_customer_</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1mpaqfi" sourceRef="dealer_tracker_age_decision" targetRef="Gateway_13xhwt8" />
+    <bpmn:sequenceFlow id="eligible_customer_flag" name="eligible_customer" sourceRef="Gateway_13xhwt8" targetRef="eligible_customer_id">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:manualTask id="eligible_customer_id" name="eligible_customer">
+      <bpmn:incoming>eligible_customer_flag</bpmn:incoming>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="uneligible_customer_" name="uneligible_customer" sourceRef="Gateway_13xhwt8" targetRef="uneligible_customer_id">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false
+</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:manualTask id="uneligible_customer_id" name="uneligible_customer">
+      <bpmn:incoming>uneligible_customer_</bpmn:incoming>
+    </bpmn:manualTask>
+    <bpmn:businessRuleTask id="dealer_tracker_age_decision" name="dealer_tracker_age_decision">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="dealer_tracker_age_validation" resultVariable="age" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1930bln</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mpaqfi</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="dealer_tracker_validation_workflow">
+      <bpmndi:BPMNShape id="Event_01jzodt_di" bpmnElement="received_dms_application_id">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="145" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bl53m9_di" bpmnElement="dms_application_validation_id">
+        <dc:Bounds x="330" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13xhwt8_di" bpmnElement="Gateway_13xhwt8" isMarkerVisible="true">
+        <dc:Bounds x="775" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qmr3hl_di" bpmnElement="eligible_customer_id">
+        <dc:Bounds x="950" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1twc6zw_di" bpmnElement="uneligible_customer_id">
+        <dc:Bounds x="750" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qx7guh_di" bpmnElement="dealer_tracker_age_decision">
+        <dc:Bounds x="550" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1m9z0ki_di" bpmnElement="Flow_1m9z0ki">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="330" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1930bln_di" bpmnElement="Flow_1930bln">
+        <di:waypoint x="430" y="120" />
+        <di:waypoint x="550" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mpaqfi_di" bpmnElement="Flow_1mpaqfi">
+        <di:waypoint x="650" y="120" />
+        <di:waypoint x="775" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rk0bvr_di" bpmnElement="eligible_customer_flag">
+        <di:waypoint x="825" y="120" />
+        <di:waypoint x="950" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="845" y="102" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ve2u2q_di" bpmnElement="uneligible_customer_">
+        <di:waypoint x="800" y="145" />
+        <di:waypoint x="800" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="776" y="185" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
